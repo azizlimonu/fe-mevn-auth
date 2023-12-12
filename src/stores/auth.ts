@@ -1,33 +1,33 @@
-import { defineStore } from "pinia";
-import { useApi, useApiPrivate } from "@/composables/useApi";
+import { defineStore } from 'pinia'
+import { useApi, useApiPrivate } from '@/composables/useApi'
 
 export interface User {
-  id: number,
-  username: string,
-  email: string,
-  first_name: string,
-  last_name: string,
+  id: number
+  username: string
+  email: string
+  first_name: string
+  last_name: string
   full_name?: string
 }
 
 export interface State {
-  user: User,
-  accessToken: string,
+  user: User
+  accessToken: string
   authReady: boolean
 }
 
 export interface LoginData {
-  email: string,
+  email: string
   password: string
 }
 
 export interface RegisterData {
-  username: string,
-  email: string,
-  first_name: string,
+  username: string
+  email: string
+  first_name: string
   last_name: string
-  password: string,
-  password_confirm: string,
+  password: string
+  password_confirm: string
 }
 
 export const useAuthStore = defineStore('auth', {
@@ -35,19 +35,19 @@ export const useAuthStore = defineStore('auth', {
     return {
       user: {} as User,
       accessToken: '' as string,
-      authReady: false as boolean,
+      authReady: false as boolean
     }
   },
 
   getters: {
     userDetail: (state: State) => state.user,
-    isAuthenticated: (state: State) => state.accessToken ? true : false
+    isAuthenticated: (state: State) => (state.accessToken ? true : false)
   },
 
   actions: {
     async login(payload: LoginData) {
       try {
-        const { data } = await useApi().post(`/api/auth/login`, payload);
+        const { data } = await useApi().post(`/api/auth/login`, payload)
         this.accessToken = data.access_token
         await this.getUser()
         return data
@@ -57,15 +57,15 @@ export const useAuthStore = defineStore('auth', {
     },
     async register(payload: RegisterData) {
       try {
-        const { data } = await useApi().post(`/api/auth/register`, payload);
-        return data;
+        const { data } = await useApi().post(`/api/auth/register`, payload)
+        return data
       } catch (error: Error | any) {
-        console.log(`Error while Register ${error}`);
+        console.log(`Error while Register ${error}`)
       }
     },
     async getUser() {
       try {
-        const { data } = await useApiPrivate().get(`/api/auth/user`);
+        const { data } = await useApiPrivate().get(`/api/auth/user`)
         this.user = data
         return data
       } catch (error: Error | any) {
@@ -74,8 +74,8 @@ export const useAuthStore = defineStore('auth', {
     },
     async logout() {
       try {
-        const { data } = await useApiPrivate().post(`/api/auth/logout`);
-        this.accessToken = ""
+        const { data } = await useApiPrivate().post(`/api/auth/logout`)
+        this.accessToken = ''
         this.user = {} as User
         return data
       } catch (error: Error | any) {
@@ -84,7 +84,7 @@ export const useAuthStore = defineStore('auth', {
     },
     async refresh() {
       try {
-        const { data } = await useApi().post(`/api/auth/refresh`);
+        const { data } = await useApi().post(`/api/auth/refresh`)
         this.accessToken = data.access_token
         return data
       } catch (error: Error | any) {
@@ -99,6 +99,6 @@ export const useAuthStore = defineStore('auth', {
         return
       }
       return
-    },
+    }
   }
 })
